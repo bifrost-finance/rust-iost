@@ -1,5 +1,4 @@
 use serde::{Serialize, Deserialize};
-use crate::transaction::Transaction;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Info {

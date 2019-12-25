@@ -1,9 +1,11 @@
 use crate::error::Error;
-use crate::get_node_info::GetNodeInfo;
-use serde::{Deserialize, Serialize};
-use std::fmt::Debug;
+use serde::{Deserialize};
 use async_trait::async_trait;
-use crate::get_chain_info::GetChainInfo;
+use crate::get_node_info::NodeInfo;
+use crate::get_chain_info::ChainInfo;
+use crate::get_gas_ratio::GasRatio;
+use crate::get_ram_info::RamInfo;
+use crate::message::ErrorMessage;
 
 mod get_node_info;
 mod net_work_info;
@@ -67,23 +69,32 @@ impl Client for IOST {
     async fn get<T>(&self, path: &str) -> Result<T, Error> where T: 'static + for<'de>Deserialize<'de> {
         let url = format!("{}/{}", self.host, path);
         let response = self.client.get(&url).send().await.map_err(Error::Reqwest)?;
-        let result = response.json::<T>().await.map_err(Error::Reqwest)?;
-
-        Ok(result)
+        if response.status() == 200 {
+            let result = response.json::<T>().await.map_err(Error::Reqwest)?;
+            Ok(result)
+        } else {
+            let rsp = response.json::<ErrorMessage>().await.map_err(Error::Reqwest)?;
+            Err(Error::ErrorMessage(rsp))
+        }
     }
 
-//    async fn post(&self, path: &str) -> Result<T, Error> {
-//        unimplemented!()
-//    }
 }
 
 impl IOST {
-    pub async fn get_node_info(&self) -> Result<GetNodeInfo, Error> {
+    pub async fn get_node_info(&self) -> Result<NodeInfo, Error> {
         self.get("getNodeInfo").await
     }
 
-    pub async fn get_chain_info(&self) -> Result<GetChainInfo, Error> {
-        self.get("getChanInfo").await
+    pub async fn get_chain_info(&self) -> Result<ChainInfo, Error> {
+        self.get("getChainInfo").await
+    }
+
+    pub async fn get_gas_ratio(&self) -> Result<GasRatio, Error> {
+        self.get("getGasRatio").await
+    }
+
+    pub async fn get_ram_info(&self) -> Result<RamInfo, Error> {
+        self.get("getRAMInfo").await
     }
 }
 
@@ -99,5 +110,9 @@ mod tests {
         dbg!(&result);
         let chain_result = iost.get_chain_info().await;
         dbg!(&chain_result);
+        let gas_result = iost.get_gas_ratio().await;
+        dbg!(&gas_result);
+        let ram_result = iost.get_ram_info().await;
+        dbg!(&ram_result);
     }
 }

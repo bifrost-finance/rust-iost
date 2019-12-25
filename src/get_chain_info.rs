@@ -1,9 +1,7 @@
-use serde::{Serialize, Deserialize};
-use reqwest::Response;
-use serde::de::DeserializeOwned;
+use serde::{Deserialize};
 
 #[derive(Deserialize, Debug)]
-pub struct GetChainInfo {
+pub struct ChainInfo {
     /// Network name, such as "mainnet" or "testnet"
     pub net_name: String,
     /// iost protocol version
@@ -30,9 +28,9 @@ pub struct GetChainInfo {
     pub lib_block_time: String
 }
 
-async fn get_chain_info() -> GetChainInfo {
+async fn get_chain_info() -> ChainInfo {
     let res = reqwest::get("https://api.iost.io/getChainInfo").await.unwrap()
-        .json::<GetChainInfo>()
+        .json::<ChainInfo>()
         .await.unwrap();
     res
 }

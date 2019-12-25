@@ -1,18 +1,16 @@
-use serde::{Serialize, Deserialize};
-use reqwest::Response;
-use serde::de::DeserializeOwned;
+use serde::{Deserialize};
 
 #[derive(Deserialize, Debug)]
-pub struct GetGasRatio {
+pub struct GasRatio {
     /// the lowest gas ratio of the most recently packed blocks
     pub lowest_gas_ratio: f64,
     /// the median gas ratio of the most recently packed blocks
     pub median_gas_ratio: f64
 }
 
-async fn get_gas_ratio() -> GetGasRatio{
+async fn get_gas_ratio() -> GasRatio{
     let res = reqwest::get("https://api.iost.io/getGasRatio").await.unwrap()
-        .json::<GetGasRatio>()
+        .json::<GasRatio>()
         .await.unwrap();
     res
 }

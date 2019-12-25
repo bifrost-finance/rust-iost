@@ -1,6 +1,4 @@
 use serde::{Serialize, Deserialize};
-use reqwest::Response;
-use serde::de::DeserializeOwned;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GetTokenInfo {

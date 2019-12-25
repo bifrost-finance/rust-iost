@@ -1,6 +1,4 @@
 use serde::{Serialize, Deserialize};
-use reqwest::Response;
-use serde::de::DeserializeOwned;
 use crate::status::Status;
 use crate::block::Block;
 

@@ -1,9 +1,7 @@
-use serde::{Serialize, Deserialize};
-use reqwest::Response;
-use serde::de::DeserializeOwned;
+use serde::{Deserialize};
 
 #[derive(Deserialize, Debug)]
-pub struct GetRamInfo {
+pub struct RamInfo {
     /// RAM available, in byte
     pub available_ram: String,
     /// The amount of RAM sold, in byte
@@ -16,9 +14,9 @@ pub struct GetRamInfo {
     pub sell_price: f64
 }
 
-async fn get_ram_info() -> GetRamInfo {
+async fn get_ram_info() -> RamInfo {
     let res = reqwest::get("https://api.iost.io/getRAMInfo").await.unwrap()
-        .json::<GetRamInfo>()
+        .json::<RamInfo>()
         .await.unwrap();
     res
 }

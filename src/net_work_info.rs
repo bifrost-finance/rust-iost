@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize, Serializer};
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct NetWork {

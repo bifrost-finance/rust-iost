@@ -2,8 +2,6 @@ use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
 use crate::status_code::StatusCode;
 use crate::receipts::Receipt;
-use reqwest::Response;
-use serde::de::DeserializeOwned;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TxReceipt {

@@ -1,10 +1,9 @@
 use crate::message::ErrorMessage;
 
-pub type Result<T> = std::result::Result<T, Error>;
-
 #[derive(Debug)]
 pub enum Error {
-    JsonReadError,
+    ///Error request message
     Reqwest(reqwest::Error),
-    ErrorMessage(ErrorMessage),
+    ///Error response message
+    ErrorMessage(ErrorMessage)
 }

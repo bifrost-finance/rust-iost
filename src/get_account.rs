@@ -1,6 +1,4 @@
 use serde::{Serialize, Deserialize};
-use reqwest::Response;
-use serde::de::DeserializeOwned;
 use std::collections::HashMap;
 use crate::gas_info::GasInfo;
 use crate::ram_info::RAMInfo;

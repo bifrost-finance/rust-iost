@@ -1,6 +1,4 @@
 use serde::{Serialize, Deserialize};
-use reqwest::Response;
-use serde::de::DeserializeOwned;
 use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Debug)]

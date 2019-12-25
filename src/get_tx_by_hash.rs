@@ -1,7 +1,5 @@
 use serde::{Serialize, Deserialize};
 use crate::transaction::Transaction;
-use reqwest::Response;
-use serde::de::DeserializeOwned;
 use crate::status::Status;
 
 #[derive(Serialize, Deserialize, Debug)]
