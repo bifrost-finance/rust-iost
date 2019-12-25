@@ -53,7 +53,6 @@ trait Client {
 
     async fn get<T>(&self, path: &str) -> Result<T, Error> where T: 'static + for<'de>Deserialize<'de>;
 
-//    async fn post(&self, path: &str) -> Result<T, Error>;
 }
 
 #[async_trait]
@@ -98,6 +97,7 @@ impl IOST {
     }
 }
 
+//Execute test file command "cargo test iost_basic_test -- --nocapture"
 #[cfg(test)]
 mod tests {
     use super::*;
