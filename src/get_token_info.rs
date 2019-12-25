@@ -1,7 +1,9 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize};
+use crate::error::Error;
+use crate::message::ErrorMessage;
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct GetTokenInfo {
+#[derive(Deserialize, Debug)]
+pub struct TokenInfo {
     /// token symbol
     pub symbol: String,
     /// token full name
@@ -22,26 +24,27 @@ pub struct GetTokenInfo {
     pub can_transfer: bool,
     /// whether the token can only be transfered by issuer
     pub only_issuer_can_transfer: bool
-
 }
 
-async fn get_token_info(domain: &str, symbol: &str, by_longest_chain: bool) -> GetTokenInfo {
+async fn get_token_info(domain: &str, symbol: &str, by_longest_chain: bool) -> Result<TokenInfo, Error> {
     let url = format!("{}/getTokenInfo/{}/{}", domain, symbol, by_longest_chain);
-    let res = reqwest::get(&url).await.unwrap()
-        .json::<GetTokenInfo>()
-        .await.unwrap();
-    res
+    let req = reqwest::get(&url).await.map_err(Error::Reqwest)?;
+    if req.status() == 200 {
+        let rsp = req.json::<TokenInfo>().await.map_err(Error::Reqwest)?;
+        Ok(rsp)
+    } else {
+        let rsp = req.json::<ErrorMessage>().await.map_err(Error::Reqwest)?;
+        Err(Error::ErrorMessage(rsp))
+    }
 }
 
 #[cfg(test)]
 mod test {
-
     use super::*;
 
     #[tokio::test]
     async fn get_token_info_should_be_ok() {
-
-        println!("{:#?}",get_token_info("http://api.iost.io","iost",true).await)
-
+        let response = get_token_info("http://api.iost.io","iost",true).await;
+        assert!(response.is_ok());
     }
 }

@@ -2,6 +2,8 @@ use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
 use crate::status_code::StatusCode;
 use crate::receipts::Receipt;
+use crate::error::Error;
+use crate::message::ErrorMessage;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TxReceipt {
@@ -25,25 +27,26 @@ pub struct TxReceipt {
     pub receipts: Vec<Receipt>
 }
 
-async fn get_tx_receipt_json (domain: &str, hash: &str) -> TxReceipt {
+async fn get_tx_receipt_json (domain: &str, hash: &str) -> Result<TxReceipt, Error> {
     let url = format!("{}/getTxReceiptByTxHash/{}", domain, hash);
-    let res = reqwest::get(&url)
-        .await.unwrap()
-        .json::<TxReceipt>()
-        .await.unwrap();
-    res
+    let req = reqwest::get(&url).await.map_err(Error::Reqwest)?;
+    if req.status() == 200 {
+        let rsp = req.json::<TxReceipt>().await.map_err(Error::Reqwest)?;
+        Ok(rsp)
+    } else {
+        let rsp = req.json::<ErrorMessage>().await.map_err(Error::Reqwest)?;
+        Err(Error::ErrorMessage(rsp))
+    }
 }
 
 #[cfg(test)]
 mod test {
-
     use super::*;
 
     #[tokio::test]
     async fn get_tx_receipt_json_should_be_ok() {
-
-        println!("{:#?}", get_tx_receipt_json("http://api.iost.io", "Dj8bmA4Fx4LHrwLtDB6EEkNbBFU8biENxf55mNaJewYw").await);
-
+        let response = get_tx_receipt_json("http://api.iost.io", "Dj8bmA4Fx4LHrwLtDB6EEkNbBFU8biENxf55mNaJewYw").await;
+        assert!(response.is_ok());
     }
-
 }
+

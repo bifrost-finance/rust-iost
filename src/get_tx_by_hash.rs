@@ -1,6 +1,8 @@
 use serde::{Serialize, Deserialize};
 use crate::transaction::Transaction;
 use crate::status::Status;
+use crate::error::Error;
+use crate::message::ErrorMessage;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GetTxByHash {
@@ -12,24 +14,26 @@ pub struct GetTxByHash {
     pub block_number: String
 }
 
-async fn get_tx_by_hash_info(domain: &str, hash: &str) -> GetTxByHash {
+async fn get_tx_by_hash_info(domain: &str, hash: &str) -> Result<GetTxByHash, Error> {
     let url = format!("{}/getTxByHash/{}", domain, hash);
-    let res = reqwest::get(&url)
-        .await.unwrap()
-        .json::<GetTxByHash>()
-        .await.unwrap();
-    res
+    let req = reqwest::get(&url).await.map_err(Error::Reqwest)?;
+    if req.status() == 200 {
+        let rsp = req.json::<GetTxByHash>().await.map_err(Error::Reqwest)?;
+        Ok(rsp)
+    } else {
+        let rsp = req.json::<ErrorMessage>().await.map_err(Error::Reqwest)?;
+        Err(Error::ErrorMessage(rsp))
+    }
 }
 
 #[cfg(test)]
 mod test {
-
     use super::*;
 
     #[tokio::test]
     async fn get_tx_by_hash_info_should_be_ok (){
-
-        println!("{:#?}", get_tx_by_hash_info("http://api.iost.io","Dj8bmA4Fx4LHrwLtDB6EEkNbBFU8biENxf55mNaJewYw").await);
-
+        let response: Result<GetTxByHash, Error> = get_tx_by_hash_info("http://api.iost.io","Dj8bmA4Fx4LHrwLtDB6EEkNbBFU8biENxf55mNaJewYw").await;
+        assert!(response.is_ok());
     }
 }
+

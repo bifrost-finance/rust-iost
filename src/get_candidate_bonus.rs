@@ -1,30 +1,32 @@
 use serde::{Serialize, Deserialize};
+use crate::error::Error;
+use crate::message::ErrorMessage;
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct GetCandidateBonus {
+pub struct CandidateBonus {
     /// the bonus he can receive
     pub bonus: f64
 }
 
-async fn get_candidate_bonus(domain: &str, name: &str, by_longest_chain: bool) -> GetCandidateBonus {
-
+async fn get_candidate_bonus(domain: &str, name: &str, by_longest_chain: bool) -> Result<CandidateBonus, Error> {
     let url = format!("{}/getCandidateBonus/{}/{}", domain, name, by_longest_chain);
-    let res = reqwest::get(&url).await.unwrap()
-        .json::<GetCandidateBonus>()
-        .await.unwrap();
-    res
-
+    let req = reqwest::get(&url).await.map_err(Error::Reqwest)?;
+    if req.status() == 200 {
+        let rsp = req.json::<CandidateBonus>().await.map_err(Error::Reqwest)?;
+        Ok(rsp)
+    } else {
+        let rsp = req.json::<ErrorMessage>().await.map_err(Error::Reqwest)?;
+        Err(Error::ErrorMessage(rsp))
+    }
 }
 
 #[cfg(test)]
 mod test {
-
     use super::*;
 
     #[tokio::test]
     async fn get_candidate_bonus_should_be_ok() {
-
-        println!("{:#?}", get_candidate_bonus("http://api.iost.io","erebus",true).await);
-
+        let response = get_candidate_bonus("http://api.iost.io","erebus",true).await;
+        assert!(response.is_ok());
     }
 }

@@ -1,8 +1,10 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize};
 use crate::abi::ABI;
+use crate::error::Error;
+use crate::message::ErrorMessage;
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct GetContract {
+#[derive(Deserialize, Debug)]
+pub struct Contract {
     /// contract ID
     pub id: String,
     /// the code of the contract
@@ -15,23 +17,25 @@ pub struct GetContract {
     pub abis: Vec<ABI>
 }
 
-async fn get_contract(domain: &str, id: &str, by_longest_chain: bool) -> GetContract {
+async fn get_contract(domain: &str, id: &str, by_longest_chain: bool) -> Result<Contract, Error> {
     let url = format!("{}/getContract/{}/{}", domain, id, by_longest_chain);
-    let res = reqwest::get(&url).await.unwrap()
-        .json::<GetContract>()
-        .await.unwrap();
-    res
+    let req = reqwest::get(&url).await.map_err(Error::Reqwest)?;
+    if req.status() == 200 {
+        let rsp = req.json::<Contract>().await.map_err(Error::Reqwest)?;
+        Ok(rsp)
+    } else {
+        let rsp = req.json::<ErrorMessage>().await.map_err(Error::Reqwest)?;
+        Err(Error::ErrorMessage(rsp))
+    }
 }
 
 #[cfg(test)]
 mod test {
-
     use super::*;
 
     #[tokio::test]
     async fn get_contract_should_be_ok() {
-
-        println!("{:#?}", get_contract("http://api.iost.io","base.iost",true).await);
-
+        let response = get_contract("http://api.iost.io","base.iost",true).await;
+        assert!(response.is_ok());
     }
 }

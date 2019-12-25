@@ -1,31 +1,35 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize};
 use std::collections::HashMap;
+use crate::error::Error;
+use crate::message::ErrorMessage;
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct GetVoterBonus {
+#[derive(Deserialize, Debug)]
+pub struct VoterBonus {
     /// the total voting bonus he can receive
     pub bonus: f64,
     /// the bonus from every candidate
     pub detail: HashMap<String,f64>
 }
 
-async fn get_voter_bonus(domain: &str, name: &str, by_longest_chain: bool) -> GetVoterBonus {
+async fn get_voter_bonus(domain: &str, name: &str, by_longest_chain: bool) -> Result<VoterBonus, Error> {
     let url = format!("{}/getVoterBonus/{}/{}", domain, name, by_longest_chain);
-    let res = reqwest::get(&url).await.unwrap()
-        .json::<GetVoterBonus>()
-        .await.unwrap();
-    res
+    let req = reqwest::get(&url).await.map_err(Error::Reqwest)?;
+    if req.status() == 200 {
+        let rsp = req.json::<VoterBonus>().await.map_err(Error::Reqwest)?;
+        Ok(rsp)
+    } else {
+        let rsp = req.json::<ErrorMessage>().await.map_err(Error::Reqwest)?;
+        Err(Error::ErrorMessage(rsp))
+    }
 }
 
 #[cfg(test)]
 mod test {
-
     use super::*;
 
     #[tokio::test]
     async fn get_voter_bonus_should_be_ok() {
-
-        println!("{:#?}",get_voter_bonus("http://api.iost.io", "admin", true).await);
-
+        let response = get_voter_bonus("http://api.iost.io", "admin", true).await;
+        assert!(response.is_ok());
     }
 }
