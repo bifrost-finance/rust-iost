@@ -52,13 +52,13 @@ mod tests {
         let host = "https://api.iost.io";
         let iost = IOST::new(host);
         let result = iost.get_node_info().await;
-        dbg!(&result);
+        assert!(result.is_ok());
         let chain_result = iost.get_chain_info().await;
-        dbg!(&chain_result);
+        assert!(chain_result.is_ok());
         let gas_result = iost.get_gas_ratio().await;
-        dbg!(&gas_result);
+        assert!(gas_result.is_ok());
         let ram_result = iost.get_ram_info().await;
-        dbg!(&ram_result);
+        assert!(ram_result.is_ok());
     }
 }
 ~~~
