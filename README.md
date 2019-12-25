@@ -10,13 +10,13 @@ An Iost library implemented in Rust
 # curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-1. Clone rust-iost repository
+2. Clone rust-iost repository
 
 ```
 # git clone https://github.com/bifrost-codes/rust-iost.git
 ```
 
-1. Run Cargo test
+3. Run Cargo test
 
 ```
 # cargo test
