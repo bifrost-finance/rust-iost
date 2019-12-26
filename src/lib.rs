@@ -41,6 +41,10 @@ mod get_voter_bonus;
 mod get_token_info;
 mod error;
 mod message;
+mod get_contract_storage;
+mod get_contract_storage_fields;
+mod get_batch_contract_storage;
+mod key_field;
 
 struct IOST {
     host: String,
