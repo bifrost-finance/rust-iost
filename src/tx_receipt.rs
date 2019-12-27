@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use serde::{Serialize, Deserialize};
 use std::collections::HashMap;
 use crate::status_code::StatusCode;
@@ -27,7 +29,6 @@ pub struct TxReceipt {
     pub receipts: Vec<Receipt>
 }
 
-#[warn(dead_code)]
 async fn get_tx_receipt_json (domain: &str, hash: &str) -> Result<TxReceipt, Error> {
     let url = format!("{}/getTxReceiptByTxHash/{}", domain, hash);
     let req = reqwest::get(&url).await.map_err(Error::Reqwest)?;

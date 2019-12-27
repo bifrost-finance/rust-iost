@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use serde::{Serialize, Deserialize};
 use crate::net_work_info::NetWork;
 use crate::message::ErrorMessage;
@@ -19,7 +21,6 @@ pub struct NodeInfo {
     pub server_time: String,
 }
 
-#[warn(dead_code)]
 async fn get_node_info () -> Result<NodeInfo, Error>  {
     let req = reqwest::get("https://api.iost.io/getNodeInfo").await.map_err(Error::Reqwest)?;
     if req.status() == 200 {
