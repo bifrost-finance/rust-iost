@@ -28,9 +28,7 @@ async fn get_batch_contract_storage(new_post: BatchContractStoragePost) -> Resul
         .json(&new_post)
         .send()
         .await.map_err(Error::Reqwest)?;
-
     let status_code = req.status();
-
     if status_code == 200 {
         let response = req.json().await.map_err(Error::Reqwest)?;
         Ok(response)
