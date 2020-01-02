@@ -51,6 +51,8 @@ mod get_contract_storage;
 mod get_contract_storage_fields;
 mod get_batch_contract_storage;
 mod key_field;
+mod secp256k1;
+mod ED25519;
 
 struct IOST {
     host: String,
@@ -141,7 +143,7 @@ impl IOST {
     }
 }
 
-//Execute test file command "cargo test iost_basic_test -- --nocapture"
+/// Execute test file command "cargo test iost_basic_test -- --nocapture"
 #[cfg(test)]
 mod tests {
     use super::*;
