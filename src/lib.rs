@@ -52,7 +52,11 @@ mod get_contract_storage_fields;
 mod get_batch_contract_storage;
 mod key_field;
 mod secp256k1;
-mod ED25519;
+mod ed25519;
+mod tx;
+mod signature;
+mod tx_response;
+mod bytes;
 
 struct IOST {
     host: String,
