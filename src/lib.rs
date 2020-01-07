@@ -57,6 +57,7 @@ mod tx;
 mod signature;
 mod tx_response;
 mod bytes;
+mod usign;
 
 struct IOST {
     host: String,
