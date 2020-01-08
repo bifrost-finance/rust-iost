@@ -3,9 +3,9 @@
 //! # Examples
 //!
 //! ```
-//! use eosio_core::{Read, Write, NumBytes};
+//! use eosio_core::{Read, Write, NumberBytes};
 //!
-//! #[derive(Read, Write, NumBytes, PartialEq, Debug)]
+//! #[derive(Read, Write, NumberBytes, PartialEq, Debug)]
 //! #[eosio_core_root_path = "::eosio_core"]
 //! struct Thing(u8);
 //!
@@ -66,9 +66,9 @@ pub fn derive_read(input: TokenStream) -> TokenStream {
     crate::derive_read::expand(input)
 }
 
-/// Derive the `NumBytes` trait
+/// Derive the `NumberBytes` trait
 #[inline]
-#[proc_macro_derive(NumBytes, attributes(eosio_core_root_path))]
+#[proc_macro_derive(NumberBytes, attributes(eosio_core_root_path))]
 pub fn derive_num_bytes(input: TokenStream) -> TokenStream {
     crate::derive_num_bytes::expand(input)
 }

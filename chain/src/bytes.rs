@@ -481,25 +481,25 @@ mod test {
 
     }
 
-//    #[test]
-//    fn test4() {
-//         #[derive(Read, Write, Debug)]
-//         struct Thing {
-//             a: u64,
-//             b: u64,
-//             c: u32,
-//         }
-//
-//        let mut thing = Thing{
-//            a: 1023,
-//            b: 2,
-//            c: 3
-//        };
-//
-//        let mut bytes = [0u8; 100];
-//        let mut write_pos = 0;
-//        let a = thing.write(&bytes, write_pos);
-//        dbg!(a);
-//    }
+    #[test]
+    fn test4() {
+         #[derive(Read, Write, Debug)]
+         struct Thing {
+             a: u64,
+             b: u64,
+             c: u32,
+         }
+
+        let mut thing = Thing{
+            a: 1023,
+            b: 2,
+            c: 3
+        };
+
+        let mut bytes = [0u8; 100];
+        let mut write_pos = 0;
+        let a = thing.write(&bytes, write_pos);
+        dbg!(a);
+    }
 }
 
