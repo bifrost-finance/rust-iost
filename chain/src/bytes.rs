@@ -60,8 +60,9 @@ macro_rules! impl_num {
                 for i in 0..width {
                     match bytes.get(*pos) {
                         Some(b) => {
-                            let shift = <Self as From<u8>>::from(i as u8).saturating_mul(<Self as From<u8>>::from(8_u8));
-                            num |= <Self as From<u8>>::from(*b) << shift;
+//                            let shift = <Self as From<u8>>::from(i as u8).saturating_mul(<Self as From<u8>>::from(8_u8));
+//                            num |= <Self as From<u8>>::from(*b) << shift;
+                            num |= <Self as From<u8>>::from(*b) << width;
                         }
                         None => return Err(ReadError::NotEnoughBytes),
                     }
@@ -81,8 +82,9 @@ macro_rules! impl_num {
                     // TODO rework this to dynamically allocate?
                     match bytes.get_mut(*pos) {
                         Some(byte) => {
-                            let shift = <Self as From<u8>>::from(i as u8).saturating_mul(<Self as From<u8>>::from(8_u8));
-                            *byte = ((*self >> shift) & ff) as u8;
+//                            let shift = <Self as From<u8>>::from(i as u8).saturating_mul(<Self as From<u8>>::from(8_u8));
+//                            *byte = ((*self >> shift) & ff) as u8;
+                            *byte = (*self >> width) as u8;
                         }
                         None => return Err(WriteError::NotEnoughSpace),
                     }
@@ -465,4 +467,39 @@ mod test {
         let a = u8::read(bytes, &mut pos);
         assert_eq!(pos, 1);
     }
+
+    #[test]
+    fn test3() {
+        let bytes = &mut [0u8; 100];
+
+        let mut pos = 0;
+
+        let a = 5u8.write(bytes, &mut pos)
+            ;
+
+        dbg!(a);
+
+    }
+
+//    #[test]
+//    fn test4() {
+//         #[derive(Read, Write, Debug)]
+//         struct Thing {
+//             a: u64,
+//             b: u64,
+//             c: u32,
+//         }
+//
+//        let mut thing = Thing{
+//            a: 1023,
+//            b: 2,
+//            c: 3
+//        };
+//
+//        let mut bytes = [0u8; 100];
+//        let mut write_pos = 0;
+//        let a = thing.write(&bytes, write_pos);
+//        dbg!(a);
+//    }
 }
+
