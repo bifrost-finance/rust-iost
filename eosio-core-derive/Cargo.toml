@@ -1,5 +1,5 @@
 [package]
-name = "iostio-core-derive"
+name = "eosio-core-derive"
 version = "0.2.1"
 authors = ["Liam Curry <liam@sagan.software>"]
 edition = "2018"

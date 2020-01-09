@@ -82,9 +82,10 @@ macro_rules! impl_num {
                     // TODO rework this to dynamically allocate?
                     match bytes.get_mut(*pos) {
                         Some(byte) => {
+                            let shift = <Self as From<u8>>::from(i as u8).saturating_mul(<Self as From<u8>>::from(8_u8));
 //                            let shift = <Self as From<u8>>::from(i as u8).saturating_mul(<Self as From<u8>>::from(8_u8));
 //                            *byte = ((*self >> shift) & ff) as u8;
-                            *byte = (*self >> width) as u8;
+                            *byte = ((*self >> shift) & ff) as u8;
                         }
                         None => return Err(WriteError::NotEnoughSpace),
                     }
