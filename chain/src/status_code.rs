@@ -1,5 +1,7 @@
-use serde::{Serialize,Deserialize};
-#[derive(Serialize,Deserialize,Debug)]
+use serde::{Serialize, Deserialize};
+
+#[allow(non_camel_case_types)]
+#[derive(Serialize, Deserialize, Debug)]
 pub enum StatusCode {
     SUCCESS,
     GAS_RUN_OUT,

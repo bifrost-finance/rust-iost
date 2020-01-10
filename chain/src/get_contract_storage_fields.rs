@@ -1,5 +1,5 @@
-use serde::{Serialize, Deserialize};
 use crate::error::Error;
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize)]
 pub struct ContractStorageFieldsPost {
@@ -52,4 +52,5 @@ mod test {
         assert!(res.is_ok());
     }
 }
+
 

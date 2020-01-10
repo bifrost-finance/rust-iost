@@ -1,7 +1,7 @@
-use serde::{Deserialize};
-use crate::frozen_balance::FrozenBalance;
 use crate::error::Error;
+use crate::frozen_balance::FrozenBalance;
 use crate::message::ErrorMessage;
+use serde::{Deserialize};
 
 #[derive(Deserialize, Debug)]
 pub struct TokenBalance {
@@ -33,6 +33,7 @@ mod test {
         assert!(response.is_ok());
     }
 }
+
 
 
 

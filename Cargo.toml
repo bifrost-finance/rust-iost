@@ -1,5 +1,5 @@
 [workspace]
 members = [
   "chain",
-  "eosio-core-derive",
+  "iost-derive",
 ]

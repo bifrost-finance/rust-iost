@@ -1,6 +1,6 @@
-use serde::{Serialize, Deserialize};
-use crate::key_field::KeyField;
 use crate::error::Error;
+use crate::key_field::KeyField;
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize)]
 pub struct BatchContractStoragePost {
@@ -64,3 +64,4 @@ mod test {
         assert!(res.is_ok());
     }
 }
+

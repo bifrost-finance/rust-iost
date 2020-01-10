@@ -1,5 +1,5 @@
-use serde::{Serialize, Deserialize};
 use crate::bytes::{Read, Write, WriteError, NumberBytes, ReadError};
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct UnsignedInt(u32);

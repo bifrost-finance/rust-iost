@@ -1,13 +1,13 @@
-use serde::{Deserialize};
-use std::collections::HashMap;
-use crate::gas_info::GasInfo;
-use crate::ram_info::RAMInfo;
-use crate::permission::Permission;
-use crate::group::Group;
-use crate::frozen_balance::FrozenBalance;
-use crate::vote_info::VoteInfo;
 use crate::error::Error;
+use crate::frozen_balance::FrozenBalance;
+use crate::gas_info::GasInfo;
+use crate::group::Group;
 use crate::message::ErrorMessage;
+use crate::permission::Permission;
+use crate::ram_info::RAMInfo;
+use crate::vote_info::VoteInfo;
+use std::collections::HashMap;
+use serde::{Deserialize};
 
 #[derive(Deserialize, Debug)]
 pub struct Account {
@@ -51,3 +51,4 @@ mod test {
         assert!(response.is_ok());
     }
 }
+

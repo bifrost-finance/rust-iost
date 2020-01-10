@@ -1,7 +1,5 @@
-//use itoa::Integer;
-
-use byteorder::{ReadBytesExt, BigEndian, WriteBytesExt};
-use crate::usign::UnsignedInt;
+use byteorder::{BigEndian, WriteBytesExt};
+use crate::unsigned_int::UnsignedInt;
 
 /// Count the number of bytes a type is expected to use.
 pub trait NumberBytes {
@@ -60,9 +58,9 @@ macro_rules! impl_num {
                 for i in 0..width {
                     match bytes.get(*pos) {
                         Some(b) => {
-//                            let shift = <Self as From<u8>>::from(i as u8).saturating_mul(<Self as From<u8>>::from(8_u8));
-//                            num |= <Self as From<u8>>::from(*b) << shift;
-                            num |= <Self as From<u8>>::from(*b) << width;
+                            let shift = <Self as From<u8>>::from(i as u8).saturating_mul(<Self as From<u8>>::from(8_u8));
+                            num |= <Self as From<u8>>::from(*b) << shift;
+//                            num |= <Self as From<u8>>::from(*b) << width;
                         }
                         None => return Err(ReadError::NotEnoughBytes),
                     }
@@ -83,8 +81,6 @@ macro_rules! impl_num {
                     match bytes.get_mut(*pos) {
                         Some(byte) => {
                             let shift = <Self as From<u8>>::from(i as u8).saturating_mul(<Self as From<u8>>::from(8_u8));
-//                            let shift = <Self as From<u8>>::from(i as u8).saturating_mul(<Self as From<u8>>::from(8_u8));
-//                            *byte = ((*self >> shift) & ff) as u8;
                             *byte = ((*self >> shift) & ff) as u8;
                         }
                         None => return Err(WriteError::NotEnoughSpace),
@@ -409,52 +405,17 @@ impl<'a> Write for &'a str {
     }
 }
 
-fn big() {
-    let mut wtr = Vec::new();
-    dbg!(wtr.write_i64::<BigEndian>(1023).unwrap());
-    dbg!(wtr);
-
-    let s = String::from("iost");
-    let length = s.len() as u32;
-    let mut arr = Vec::new();
-    arr.write_u32::<BigEndian>(length).unwrap();
-    let mut bytes= s.into_bytes() ;
-    arr.reverse();
-    for i in arr {
-        bytes.insert(0,i);
-    }
-    dbg!(bytes);
-
-    let arr_t = vec!["iost","iost"];
-    let le = arr_t.len() as u32;
-    let mut a_ = Vec::new();
-    let mut a_u = Vec::new();
-//    a_.write_u32::<BigEndian>(le);
-//    a_.reverse();
-    for i in arr_t {
-        let mut a = i.as_bytes().to_vec();
-        let i_len = i.len() as u32;
-        a_.write_u32::<BigEndian>(i_len);
-        a_.reverse();
-        for k in &a_ {
-            a.insert(0, *k);
-        }
-        dbg!(&a);
-        for j in a {
-            a_u.push(j);
-        }
-    }
-    dbg!(a_u);
-    println!("{}",le);
-}
-
 #[cfg(test)]
 mod test {
     use super::*;
+    use iost_derive::{Read, Write, NumberBytes};
 
-    #[test]
-    fn test1() {
-        big()
+    #[derive(Read, Write, NumberBytes, Debug)]
+    #[iost_root_path="crate"]
+    struct Thing {
+        a: u64,
+        b: u64,
+        c: u32,
     }
 
     #[test]
@@ -475,8 +436,7 @@ mod test {
 
         let mut pos = 0;
 
-        let a = 5u8.write(bytes, &mut pos)
-            ;
+        let a = 5u8.write(bytes, &mut pos);
 
         dbg!(a);
 
@@ -484,14 +444,7 @@ mod test {
 
     #[test]
     fn test4() {
-         #[derive(Read, Write, Debug)]
-         struct Thing {
-             a: u64,
-             b: u64,
-             c: u32,
-         }
-
-        let mut thing = Thing{
+        let thing = Thing{
             a: 1023,
             b: 2,
             c: 3
@@ -499,8 +452,46 @@ mod test {
 
         let mut bytes = [0u8; 100];
         let mut write_pos = 0;
-        let a = thing.write(&bytes, write_pos);
+        let a = thing.write(&mut bytes, &mut write_pos);
         dbg!(a);
     }
-}
 
+    #[test]
+    fn big_endian_should_be_ok() {
+        let mut wtr = Vec::new();
+        dbg!(wtr.write_i64::<BigEndian>(1023).unwrap());
+        dbg!(wtr);
+
+        let s = String::from("iost");
+        let length = s.len() as u32;
+        let mut arr = Vec::new();
+        arr.write_u32::<BigEndian>(length).unwrap();
+        let mut bytes= s.into_bytes() ;
+        arr.reverse();
+        for i in arr {
+            bytes.insert(0,i);
+        }
+        dbg!(bytes);
+
+        let arr_t = vec!["iost","iost"];
+        let le = arr_t.len() as u32;
+        let mut a_ = Vec::new();
+        let mut a_u = Vec::new();
+
+        for i in arr_t {
+            let mut a = i.as_bytes().to_vec();
+            let i_len = i.len() as u32;
+            a_.write_u32::<BigEndian>(i_len);
+            a_.reverse();
+            for k in &a_ {
+                a.insert(0, *k);
+            }
+            dbg!(&a);
+            for j in a {
+                a_u.push(j);
+            }
+        }
+        dbg!(a_u);
+        println!("{}",le);
+    }
+}

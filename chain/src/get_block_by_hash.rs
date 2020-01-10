@@ -1,8 +1,8 @@
-use serde::{Serialize, Deserialize};
-use crate::status::Status;
 use crate::block::Block;
 use crate::error::Error;
 use crate::message::ErrorMessage;
+use crate::status::Status;
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct BlockByHash {

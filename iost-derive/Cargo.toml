@@ -1,0 +1,17 @@
+[package]
+name = "iost-derive"
+version = "0.2.1"
+authors = ["alexgituser <alexgituser@email.com>"]
+edition = "2018"
+
+[lib]
+proc-macro = true
+path = "src/lib.rs"
+
+[dependencies]
+syn = "1.0.11"
+proc-macro2 = "1.0.6"
+quote = "1.0.2"
+
+[features]
+default = []

@@ -8,13 +8,13 @@ use syn::{
 
 pub fn expand(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    let eosio_core = crate::root_path(&input);
+    let iost = crate::root_path(&input);
     let name = input.ident.clone();
 
     let mut generics = input.generics.clone();
     for param in &mut generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(#eosio_core::Read));
+            type_param.bounds.push(parse_quote!(#iost::Read));
         }
     }
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
@@ -95,8 +95,8 @@ pub fn expand(input: TokenStream) -> TokenStream {
                 if is_singleton {
                     quote! {
                         #[automatically_derived]
-                        impl #impl_generics #eosio_core::Table for #name #ty_generics #where_clause {
-                            const NAME: u64 = #eosio_core::n!(#table_name);
+                        impl #impl_generics #iost::Table for #name #ty_generics #where_clause {
+                            const NAME: u64 = #iost::n!(#table_name);
 
                             type Row = Self;
 
@@ -109,12 +109,12 @@ pub fn expand(input: TokenStream) -> TokenStream {
                         #[automatically_derived]
                         impl #impl_generics #name #ty_generics #where_clause {
                             #[inline]
-                            pub fn singleton<C, S>(code: C, scope: S) -> #eosio_core::SingletonIndex<Self>
+                            pub fn singleton<C, S>(code: C, scope: S) -> #iost::SingletonIndex<Self>
                             where
                                 C: Into<AccountName>,
                                 S: Into<ScopeName>,
                             {
-                                #eosio_core::SingletonIndex::new(code, scope)
+                                #iost::SingletonIndex::new(code, scope)
                             }
                         }
                     }
@@ -133,7 +133,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                             Some((ident, ty)) => {
                                 secondary_keys_expanded = quote! {
                                     #secondary_keys_expanded
-                                    Some(#eosio_core::SecondaryKey::from(row.#ident)),
+                                    Some(#iost::SecondaryKey::from(row.#ident)),
                                 };
                                 let ident = Ident::new(
                                     format!("by_{}", quote!(#ident)).as_str(),
@@ -143,12 +143,12 @@ pub fn expand(input: TokenStream) -> TokenStream {
                                     #secondary_keys_constructors
 
                                     #[inline]
-                                    pub fn #ident<C, S>(code: C, scope: S) -> #eosio_core::SecondaryTableIndex<#ty, Self>
+                                    pub fn #ident<C, S>(code: C, scope: S) -> #iost::SecondaryTableIndex<#ty, Self>
                                     where
-                                        C: Into<#eosio_core::AccountName>,
-                                        S: Into<#eosio_core::ScopeName>,
+                                        C: Into<#iost::AccountName>,
+                                        S: Into<#iost::ScopeName>,
                                     {
-                                        #eosio_core::SecondaryTableIndex::new(code, scope, #eosio_core::n!(#table_name), #i)
+                                        #iost::SecondaryTableIndex::new(code, scope, #iost::n!(#table_name), #i)
                                     }
                                 };
                             }
@@ -163,8 +163,8 @@ pub fn expand(input: TokenStream) -> TokenStream {
 
                     quote! {
                         #[automatically_derived]
-                        impl #impl_generics #eosio_core::Table for #name #ty_generics #where_clause {
-                            const NAME: u64 = #eosio_core::n!(#table_name);
+                        impl #impl_generics #iost::Table for #name #ty_generics #where_clause {
+                            const NAME: u64 = #iost::n!(#table_name);
 
                             type Row = Self;
 
@@ -174,7 +174,7 @@ pub fn expand(input: TokenStream) -> TokenStream {
                             }
 
                             #[inline]
-                            fn secondary_keys(row: &Self::Row) -> #eosio_core::SecondaryKeys {
+                            fn secondary_keys(row: &Self::Row) -> #iost::SecondaryKeys {
                                 SecondaryKeys::from([
                                     #secondary_keys_expanded
                                 ])

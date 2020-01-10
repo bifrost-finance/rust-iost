@@ -1,6 +1,6 @@
-use serde::{Serialize, Deserialize};
-use crate::transaction::Transaction;
 use crate::info::Info;
+use crate::transaction::Transaction;
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Block {
@@ -29,3 +29,4 @@ pub struct Block {
     /// all the transactions.
     pub transactions: Vec<Transaction>
 }
+

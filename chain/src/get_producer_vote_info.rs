@@ -1,7 +1,7 @@
-use serde::{Deserialize};
 use crate::status::Status;
 use crate::error::Error;
 use crate::message::ErrorMessage;
+use serde::{Deserialize};
 
 #[derive(Deserialize, Debug)]
 pub struct ProducerVoteInfo {
@@ -45,3 +45,4 @@ mod test {
         assert!(response.is_err());
     }
 }
+

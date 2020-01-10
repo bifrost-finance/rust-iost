@@ -1,6 +1,6 @@
-use serde::{Deserialize};
 use crate::error::Error;
 use crate::message::ErrorMessage;
+use serde::{Deserialize};
 
 #[derive(Deserialize, Debug)]
 pub struct TokenInfo {

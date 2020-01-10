@@ -6,8 +6,4 @@ pub struct NetWork {
     pub id: String,
     /// Peer count of the node
     pub peer_count: i32,
-
 }
-
-
-

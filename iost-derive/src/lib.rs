@@ -1,12 +1,12 @@
-//! This crate provides three derive macros for [`eosio_core`] traits.
+//! This crate provides three derive macros for [`rust-iost`] traits.
 //!
 //! # Examples
 //!
 //! ```
-//! use eosio_core::{Read, Write, NumberBytes};
+//! use rust_iost::{Read, Write, NumberBytes};
 //!
 //! #[derive(Read, Write, NumberBytes, PartialEq, Debug)]
-//! #[eosio_core_root_path = "::eosio_core"]
+//! #[iost_root_path = "crate"]
 //! struct Thing(u8);
 //!
 //! let thing = Thing(30);
@@ -22,8 +22,6 @@
 //! thing.write(&mut bytes, &mut 0).unwrap();
 //! assert_eq!(vec![30], bytes);
 //! ```
-//!
-//! [`eosio_core`]: https://crates.io/crates/eosio_core
 #![allow(clippy::unimplemented)]
 extern crate proc_macro;
 
@@ -40,35 +38,35 @@ use syn::{DeriveInput, Lit, LitStr, Meta, Path};
 
 /// Derive the `Digest` trait
 #[inline]
-#[proc_macro_derive(Digest, attributes(eosio_core_root_path))]
+#[proc_macro_derive(Digest, attributes(iost_root_path))]
 pub fn derive_digest(input: TokenStream) -> TokenStream {
     crate::derive_digest::expand(input)
 }
 
 /// Derive the `SerializeData` trait
 #[inline]
-#[proc_macro_derive(SerializeData, attributes(eosio_core_root_path))]
+#[proc_macro_derive(SerializeData, attributes(iost_root_path))]
 pub fn derive_serialize_data(input: TokenStream) -> TokenStream {
     crate::derive_serialize_data::expand(input)
 }
 
 /// Derive the `Write` trait
 #[inline]
-#[proc_macro_derive(Write, attributes(eosio_core_root_path))]
+#[proc_macro_derive(Write, attributes(iost_root_path))]
 pub fn derive_write(input: TokenStream) -> TokenStream {
     crate::derive_write::expand(input)
 }
 
 /// Derive the `Read` trait
 #[inline]
-#[proc_macro_derive(Read, attributes(eosio_core_root_path))]
+#[proc_macro_derive(Read, attributes(iost_root_path))]
 pub fn derive_read(input: TokenStream) -> TokenStream {
     crate::derive_read::expand(input)
 }
 
 /// Derive the `NumberBytes` trait
 #[inline]
-#[proc_macro_derive(NumberBytes, attributes(eosio_core_root_path))]
+#[proc_macro_derive(NumberBytes, attributes(iost_root_path))]
 pub fn derive_num_bytes(input: TokenStream) -> TokenStream {
     crate::derive_num_bytes::expand(input)
 }
@@ -83,13 +81,13 @@ pub fn derive_table(input: TokenStream) -> TokenStream {
     crate::derive_table::expand(input)
 }
 
-/// The default root path using the `eosio` crate.
-#[cfg(feature = "internal-use-only-root-path-is-eosio")]
-const DEFAULT_ROOT_PATH: &str = "::eosio";
+/// The default root path using the `rust-iost` crate.
+#[cfg(feature = "internal-use-only-root-path-is-iost")]
+const DEFAULT_ROOT_PATH: &str = "::rust_iost";
 
-/// The default root path using the `eosio_core` crate.
-#[cfg(not(feature = "internal-use-only-root-path-is-eosio"))]
-const DEFAULT_ROOT_PATH: &str = "::eosio_core";
+/// The default root path using the `iost` crate.
+#[cfg(not(feature = "internal-use-only-root-path-is-iost"))]
+const DEFAULT_ROOT_PATH: &str = "::rust_iost";
 
 /// Get the root path for types/traits.
 pub(crate) fn root_path(input: &DeriveInput) -> Path {
@@ -99,11 +97,11 @@ pub(crate) fn root_path(input: &DeriveInput) -> Path {
         .fold(None, |acc, attr| match attr.parse_meta() {
             Ok(meta) => {
                 let name = meta.path().get_ident();
-                if name.as_ref().expect("please add trait root path").to_string() == "eosio_core_root_path" {
+                if name.as_ref().expect("please add trait root path").to_string() == "iost_root_path" {
                     match meta {
                         Meta::NameValue(meta) => match meta.lit {
                             Lit::Str(s) => Some(s),
-                            _ => panic!("eosio_core_path must be a lit str"),
+                            _ => panic!("iost_root_path must be a lit str"),
                         },
                         _ => acc,
                     }
@@ -116,5 +114,5 @@ pub(crate) fn root_path(input: &DeriveInput) -> Path {
         .unwrap_or_else(|| LitStr::new(DEFAULT_ROOT_PATH, Span::call_site()));
     litstr
         .parse_with(Path::parse_mod_style)
-        .expect("bad path for eosio_core_root_path")
+        .expect("bad path for iost_root_path")
 }

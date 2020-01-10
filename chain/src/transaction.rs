@@ -1,7 +1,7 @@
-use serde::{Serialize, Deserialize};
 use crate::action::Action;
 use crate::amount_limit::AmountLimit;
 use crate::tx_receipt::TxReceipt;
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Transaction {
@@ -32,3 +32,4 @@ pub struct Transaction {
     /// the receipt of the transaction Action
     pub tx_receipt: TxReceipt
 }
+

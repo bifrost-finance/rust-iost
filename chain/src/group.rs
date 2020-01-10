@@ -1,5 +1,5 @@
-use serde::{Serialize, Deserialize};
 use crate::item::Item;
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Group {

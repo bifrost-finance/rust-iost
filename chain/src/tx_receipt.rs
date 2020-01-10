@@ -1,11 +1,11 @@
 #![allow(dead_code)]
 
-use serde::{Serialize, Deserialize};
-use std::collections::HashMap;
-use crate::status_code::StatusCode;
-use crate::receipts::Receipt;
 use crate::error::Error;
 use crate::message::ErrorMessage;
+use crate::receipts::Receipt;
+use crate::status_code::StatusCode;
+use serde::{Serialize, Deserialize};
+use std::collections::HashMap;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TxReceipt {
@@ -51,4 +51,5 @@ mod test {
         assert!(response.is_ok());
     }
 }
+
 

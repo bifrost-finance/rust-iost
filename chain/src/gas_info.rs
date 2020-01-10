@@ -1,5 +1,5 @@
-use serde::{Serialize, Deserialize};
 use crate::pledge_info::PledgeInfo;
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GasInfo {

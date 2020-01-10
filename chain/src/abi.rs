@@ -1,5 +1,5 @@
-use serde::{Serialize, Deserialize};
 use crate::amount_limit::AmountLimit;
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct ABI {
@@ -10,3 +10,4 @@ pub struct ABI {
     /// The limits on the amount
     pub amount_limit: Vec<AmountLimit>
 }
+

@@ -1,5 +1,5 @@
-use serde::{Serialize, Deserialize};
 use crate::tx_receipt::TxReceipt;
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TxResponse {

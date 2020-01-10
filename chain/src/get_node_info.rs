@@ -1,9 +1,9 @@
 #![allow(dead_code)]
 
-use serde::{Serialize, Deserialize};
 use crate::net_work_info::NetWork;
 use crate::message::ErrorMessage;
 use crate::error::Error;
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct NodeInfo {
@@ -43,6 +43,7 @@ mod test {
 
     }
 }
+
 
 
 

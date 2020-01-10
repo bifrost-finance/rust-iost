@@ -1,8 +1,8 @@
-use serde::{Serialize, Deserialize};
-use crate::transaction::Transaction;
-use crate::status::Status;
 use crate::error::Error;
 use crate::message::ErrorMessage;
+use crate::status::Status;
+use crate::transaction::Transaction;
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct GetTxByHash {
@@ -36,4 +36,5 @@ mod test {
         assert!(response.is_ok());
     }
 }
+
 

@@ -1,7 +1,7 @@
-use serde::{Deserialize};
 use crate::abi::ABI;
 use crate::error::Error;
 use crate::message::ErrorMessage;
+use serde::{Deserialize};
 
 #[derive(Deserialize, Debug)]
 pub struct Contract {
