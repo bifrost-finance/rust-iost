@@ -1,6 +1,8 @@
+#![allow(unused_imports)]
+
 use alloc::string::String;
 use alloc::vec::Vec;
-use iost_derive::{Read, Write, NumberBytes};
+use iost_derive::{Read, Write};
 use crate::unsigned_int::UnsignedInt;
 
 /// Count the number of bytes a type is expected to use.
@@ -57,12 +59,16 @@ macro_rules! impl_num {
             #[inline]
             fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
                 let width: usize = $s;
-
                 let mut num = <Self as From<u8>>::from(0_u8);
+                let mut vec = vec![];
                 for i in 0..width {
+                    vec.push(i);
+                }
+                vec.reverse();
+                for j in vec.iter() {
                     match bytes.get(*pos) {
                         Some(b) => {
-                            let shift = <Self as From<u8>>::from(i as u8).saturating_mul(<Self as From<u8>>::from(8_u8));
+                            let shift = <Self as From<u8>>::from(*j as u8).saturating_mul(<Self as From<u8>>::from(8_u8));
                             num |= <Self as From<u8>>::from(*b) << shift;
                         }
                         None => return Err(ReadError::NotEnoughBytes),
@@ -79,25 +85,21 @@ macro_rules! impl_num {
             fn write(&self, bytes: &mut [u8], pos: &mut usize) -> Result<(), WriteError> {
                 let width: usize = $s;
                 let ff = <Self as From<u8>>::from(0xff);
-
+                let mut vec = vec![];
                 for i in 0..width {
-                    // TODO rework this to dynamically allocate?
+                    vec.push(i);
+                }
+                vec.reverse();
+                for j in vec.iter() {
                     match bytes.get_mut(*pos) {
                         Some(byte) => {
-                            let shift = <Self as From<u8>>::from(i as u8).saturating_mul(<Self as From<u8>>::from(8_u8));
-                            // TODO when try_into is stablized:
-                            // let result = ((*self >> shift) & ff).try_into();
-                            // match result {
-                            //     Ok(b) => *byte = b,
-                            //     Err(_) => return Err(WriteError::TryFromIntError),
-                            // }
+                            let shift = <Self as From<u8>>::from(*j as u8).saturating_mul(<Self as From<u8>>::from(8_u8));
                             *byte = ((*self >> shift) & ff) as u8;
                         }
                         None => return Err(WriteError::NotEnoughSpace),
                     }
                     *pos = pos.saturating_add(1);
                 }
-
                 Ok(())
             }
         }
@@ -673,14 +675,6 @@ impl_array! {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use alloc::string::{String, ToString};
-    #[derive(Read, Write, PartialEq, Debug)]
-    #[iost_root_path = "crate"]
-    struct Thing {
-        a: u64,
-        b: u64,
-        c: u32,
-    }
 
     macro_rules! test_type {
         ($($i:ident, $t:ty, $e:expr)*) => ($(
@@ -747,31 +741,6 @@ mod tests {
         test_f64, f64, -0.12345_f64
     );
 
-
-
-    #[test]
-    fn test_struct_unnamed_fields() {
-        let thing = Thing{
-            a: 1023,
-            b: 2,
-            c: 3
-        };
-        let mut bytes = [0u8; 100];
-        let mut write_pos = 0;
-        thing.write(&mut bytes, &mut write_pos);
-        dbg!(write_pos);
-    }
-
-    #[test]
-    fn test_32() {
-        let mut a: bool = false;
-        let mut bytes = [0u8; 100];
-        let mut write_pos = 0;
-        a.write(&mut bytes, &mut write_pos);
-//        dbg!(bytes);
-        dbg!(write_pos);
-    }
-
     #[test]
     #[allow(clippy::result_unwrap_used)]
     fn test_read_pos() {
@@ -825,7 +794,15 @@ mod tests {
 
         1_u64.write(bytes, &mut pos).unwrap();
         assert_eq!(pos, 15);
-        dbg!(pos);
-//        println!("{:?}",bytes);
+    }
+
+    #[test]
+    #[allow(clippy::result_unwrap_used)]
+    fn test_iost_should_be_ok() {
+        let bytes: &[u8] = &[0,0,0,0,0,0,3,255];
+        let mut pos = 0;
+        let a = u64::read(bytes,&mut pos).unwrap();
+        assert_eq!(a, 1023);
     }
 }
+

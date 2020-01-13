@@ -1,5 +1,5 @@
 use serde::{Serialize, Deserialize};
-use iost_derive::{Read, Write, NumberBytes};
+use iost_derive::{Read, Write};
 
 #[derive(Serialize, Deserialize, Read, Write, PartialEq, Debug)]
 #[iost_root_path = "crate"]
@@ -18,11 +18,11 @@ mod test {
 
     #[test]
     fn test_action() {
-        let mut ac = Action{
+        let action = Action{
             contract: "iost".to_string(),
             action_name: "iost".to_string(),
             data: "iost".to_string()
         };
-        dbg!(ac);
+        dbg!(action);
     }
 }
