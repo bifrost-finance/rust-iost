@@ -242,7 +242,8 @@ impl Write for usize {
         bytes: &mut [u8],
         pos: &mut usize,
     ) -> Result<(), WriteError> {
-        UnsignedInt::from(*self).write(bytes, pos)
+        let u32_bytes = *self as u32;
+        u32_bytes.write(bytes, pos)
     }
 }
 
@@ -262,16 +263,13 @@ impl<T> Read for Vec<T>
 {
     #[inline]
     fn read(bytes: &[u8], pos: &mut usize) -> Result<Self, ReadError> {
-        let capacity = usize::read(bytes, pos)?;
-
+        let capacity = u32::read(bytes, pos)?;
         let mut results = Self::new();
-        results.resize(capacity, T::default());
-
+        results.resize(capacity as usize, T::default());
         for item in &mut results {
             let r = T::read(bytes, pos)?;
             *item = r;
         }
-
         Ok(results)
     }
 }
@@ -621,7 +619,6 @@ macro_rules! impl_array {
         {
             #[inline]
             fn num_bytes(&self) -> usize {
-                // let mut count = 1;
                 let mut count = 0;
                 for item in self.iter() {
                     count += item.num_bytes();
@@ -798,11 +795,28 @@ mod tests {
 
     #[test]
     #[allow(clippy::result_unwrap_used)]
-    fn test_iost_should_be_ok() {
+    fn test_iost_binary_serialization_should_be_ok() {
         let bytes: &[u8] = &[0,0,0,0,0,0,3,255];
         let mut pos = 0;
         let a = u64::read(bytes,&mut pos).unwrap();
         assert_eq!(a, 1023);
+        assert_eq!(pos, 8);
+    }
+
+    #[test]
+    fn test_iost_string_binary_serialization_should_be_ok() {
+        let serialize_bytes = &mut [0u8; 100];
+        let mut pos = 0;
+        let serialize_string = "iost".to_owned();
+        String::write(&serialize_string, serialize_bytes, &mut pos).unwrap();
+        assert_eq!(pos, 8);
+
+        let deserialize_bytes: &[u8] = &[0,0,0,4,105,111,115,116];
+        let mut pos = 0;
+        let deserialize_string = String::read(deserialize_bytes, &mut pos).unwrap();
+        assert_eq!(deserialize_string, "iost");
+        assert_eq!(pos, 8);
     }
 }
+
 
