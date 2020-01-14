@@ -796,7 +796,7 @@ mod tests {
     #[test]
     #[allow(clippy::result_unwrap_used)]
     fn test_iost_binary_serialization_should_be_ok() {
-        let bytes: &[u8] = &[0,0,0,0,0,0,3,255];
+        let bytes: &[u8] = &[0, 0, 0, 0, 0, 0, 3, 255];
         let mut pos = 0;
         let a = u64::read(bytes,&mut pos).unwrap();
         assert_eq!(a, 1023);
@@ -811,12 +811,20 @@ mod tests {
         String::write(&serialize_string, serialize_bytes, &mut pos).unwrap();
         assert_eq!(pos, 8);
 
-        let deserialize_bytes: &[u8] = &[0,0,0,4,105,111,115,116];
+        let deserialize_bytes: &[u8] = &[0, 0, 0, 4, 105, 111, 115, 116];
         let mut pos = 0;
         let deserialize_string = String::read(deserialize_bytes, &mut pos).unwrap();
         assert_eq!(deserialize_string, "iost");
         assert_eq!(pos, 8);
     }
+
+    #[test]
+    fn test_iost_array_binary_serialization_should_be_ok() {
+        let arr: Vec<u8> = vec![0, 0, 0, 2, 0, 0, 0, 4, 105, 111, 115, 116, 0, 0, 0, 4, 105, 111, 115, 116];
+        let mut pos = 0;
+        let vec: Vec<String> = Vec::read(arr.as_ref(), &mut pos).unwrap();
+        let local_vec = vec!["iost","iost"];
+        assert_eq!(pos, 20);
+        assert_eq!(vec, local_vec);
+    }
 }
-
-
