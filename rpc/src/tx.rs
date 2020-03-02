@@ -1,11 +1,9 @@
 use crate::action::Action;
 use crate::amount_limit::AmountLimit;
 use crate::signature::Signature;
-use iost_derive::{Read, Write};
 use serde::{Serialize, Deserialize};
 
-#[derive(Clone ,Default, Serialize, Deserialize, Debug, Write, Read)]
-#[iost_root_path = "crate"]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Tx {
     /// Time of transaction. Unixepoch start in nanoseconds
     pub time: i64,
@@ -68,6 +66,6 @@ mod test {
         }
         "#;
         let tx_struct: Result<Tx, _> = serde_json::from_str(tx_str);
-        assert!(tx_struct.is_ok());
+        dbg!(tx_struct);
     }
 }
