@@ -1,4 +1,4 @@
-use crate::abi::ABI;
+use crate::get_abi::ABI;
 use crate::error::Error;
 use crate::message::ErrorMessage;
 use serde::{Deserialize};

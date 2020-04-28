@@ -1,5 +1,5 @@
 [package]
-name = "rust-iost"
+name = "iost-chain"
 version = "0.1.0"
 authors = ["alexgituser <alexgituser@email.com>"]
 edition = "2018"

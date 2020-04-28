@@ -147,6 +147,7 @@ mod test {
         let sig_str = "SIG_K1_KomV6FEHKdtZxGDwhwSubEAcJ7VhtUQpEt5P6iDz33ic936aSXx87B2L56C8JLQkqNpp1W8ZXjrKiLHUEB4LCGeXvbtVuR";
 
         let pk = PublicKey::from_str(pk_str);
+        dbg!(&pk);
         assert!(pk.is_ok());
         let sig = Signature::from_str(sig_str);
         assert!(sig.is_ok());

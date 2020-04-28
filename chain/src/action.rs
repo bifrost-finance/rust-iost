@@ -131,12 +131,12 @@ mod test {
     }
 
     #[test]
-    fn test_action_deserialize_should_be_ok() {
+    fn test_action_deserialize_should_be_ok1() {
         let action_str = r#"
         {
             "contract": "token.iost",
             "action_name": "transfer",
-            "data": "[\"iost\", \"testaccount\", \"anothertest\", \"100\", \"this is an example transfer\"]"
+            "data": "["iost", "testaccount", "anothertest", "100", "this is an example transfer"]"
         }
         "#;
         let result_action: Result<Action, _> = serde_json::from_str(action_str);

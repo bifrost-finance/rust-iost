@@ -18,7 +18,7 @@ use serde::{Serialize, Deserialize};
 use crate::tx::Tx;
 use crate::tx_response::TxResponse;
 
-mod abi;
+mod get_abi;
 mod action;
 mod amount_limit;
 mod block;
