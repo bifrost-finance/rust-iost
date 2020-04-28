@@ -1,9 +1,9 @@
 [package]
-name = "eos-keys"
+name = "iost-keys"
 version = "0.1.0"
-authors = ["Edwin Wang <lark930@gmail.com>"]
+authors = ["alexgituser<alexgituser@email.com>"]
 edition = "2018"
-description = "Pure Rust implementation of Secp256k1 crypto for Eos"
+description = "Pure Rust implementation of Secp256k1 crypto for IOST"
 
 [dependencies]
 bitcoin_hashes = { version = "0.7", default-features = false }
