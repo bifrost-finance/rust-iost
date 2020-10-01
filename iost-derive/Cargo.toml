@@ -3,6 +3,11 @@ name = "iost-derive"
 version = "0.2.1"
 authors = ["alexgituser <alexgituser@email.com>"]
 edition = "2018"
+include = [
+    "/Cargo.toml",
+    "/src/**/*.rs",
+    "/README.md",
+]
 
 [lib]
 proc-macro = true

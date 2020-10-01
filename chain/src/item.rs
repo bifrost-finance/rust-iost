@@ -1,6 +1,10 @@
-use serde::{Serialize, Deserialize};
+use alloc::string::String;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[cfg(feature = "std")]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug)]
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
 pub struct Item {
     /// permission name or key paid ID
     pub id: String,
@@ -9,5 +13,5 @@ pub struct Item {
     /// permission weight
     pub weight: String,
     /// the permission
-    pub permission: String
+    pub permission: String,
 }

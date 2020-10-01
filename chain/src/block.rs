@@ -1,8 +1,13 @@
+use alloc::string::String;
+use alloc::vec::Vec;
+
 use crate::info::Info;
 use crate::transaction::Transaction;
-use serde::{Serialize, Deserialize};
+#[cfg(feature = "std")]
+use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Debug)]
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
 pub struct Block {
     /// block hash
     pub hash: String,
@@ -27,6 +32,5 @@ pub struct Block {
     /// (This key is reserved.)
     pub info: Info,
     /// all the transactions.
-    pub transactions: Vec<Transaction>
+    pub transactions: Vec<Transaction>,
 }
-

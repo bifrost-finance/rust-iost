@@ -1,6 +1,10 @@
-use serde::{Serialize, Deserialize};
+use alloc::string::String;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[cfg(feature = "std")]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug)]
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
 pub struct NetWork {
     /// Node ID in the p2p network
     pub id: String,

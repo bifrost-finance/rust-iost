@@ -3,5 +3,5 @@ members = [
   "chain",
   "iost-derive",
   "keys",
-  "rpc"
+  # "rpc"
 ]

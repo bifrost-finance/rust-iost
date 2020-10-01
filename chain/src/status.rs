@@ -1,9 +1,11 @@
-use serde::{Serialize,Deserialize};
+#[cfg(feature = "std")]
+use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Debug)]
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
 pub enum Status {
     PENDING,
     PACKED,
     IRREVERSIBLE,
-    APPROVED
+    APPROVED,
 }

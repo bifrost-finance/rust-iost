@@ -1,11 +1,15 @@
-use serde::{Serialize, Deserialize};
+use alloc::vec::Vec;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[cfg(feature = "std")]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug)]
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
 pub struct Info {
     /// mode of concurrency; 0 - non-concurrent; 1 - concurrent
     pub mode: i32,
     /// the thread count of transaction concurrent execution
     pub thread: i32,
     /// indices of the transaction
-    pub batch_index: Vec<i32>
+    pub batch_index: Vec<i32>,
 }

@@ -2,8 +2,8 @@
 
 use alloc::vec::Vec;
 use bitcoin_hashes::{ripemd160, Hash as HashTrait, HashEngine};
-use core::{ops, cmp, str};
 use core::hash::{Hash, Hasher};
+use core::{cmp, ops, str};
 use hex::{FromHex, FromHexError};
 
 macro_rules! impl_hash {
@@ -76,24 +76,24 @@ macro_rules! impl_hash {
                         let mut result = [0u8; $size];
                         result.copy_from_slice(&vec);
                         Ok($name(result))
-                    },
-                    _ => Err(FromHexError::InvalidStringLength)
+                    }
+                    _ => Err(FromHexError::InvalidStringLength),
                 }
             }
         }
 
-//        impl fmt::Debug for $name {
-//            fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-//                f.write_str(&self.0.to_hex::<String>())
-//            }
-//        }
+        //        impl fmt::Debug for $name {
+        //            fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        //                f.write_str(&self.0.to_hex::<String>())
+        //            }
+        //        }
 
-//        #[cfg(feature = "std")]
-//        impl fmt::Display for $name {
-//            fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-//                f.write_str(&self.0.to_hex::<String>())
-//            }
-//        }
+        //        #[cfg(feature = "std")]
+        //        impl fmt::Display for $name {
+        //            fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        //                f.write_str(&self.0.to_hex::<String>())
+        //            }
+        //        }
 
         impl ops::Deref for $name {
             type Target = [u8; $size];
@@ -125,15 +125,17 @@ macro_rules! impl_hash {
             }
         }
 
-
         impl Hash for $name {
-            fn hash<H>(&self, state: &mut H) where H: Hasher {
+            fn hash<H>(&self, state: &mut H)
+            where
+                H: Hasher,
+            {
                 state.write(&self.0);
                 state.finish();
             }
         }
 
-        impl Eq for $name { }
+        impl Eq for $name {}
 
         impl $name {
             pub fn take(self) -> [u8; $size] {
@@ -154,7 +156,7 @@ macro_rules! impl_hash {
                 self.0.iter().all(|b| *b == 0)
             }
         }
-    }
+    };
 }
 
 impl_hash!(H32, 4);
