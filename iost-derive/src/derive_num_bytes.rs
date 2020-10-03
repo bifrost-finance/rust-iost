@@ -2,10 +2,7 @@
 use crate::proc_macro::TokenStream;
 use quote::{quote, quote_spanned};
 use syn::spanned::Spanned;
-use syn::{
-    parse_macro_input, parse_quote, Data, DeriveInput, Fields, GenericParam,
-    Index,
-};
+use syn::{parse_macro_input, parse_quote, Data, DeriveInput, Fields, GenericParam, Index};
 
 /// Expand input
 pub fn expand(input: TokenStream) -> TokenStream {
@@ -39,17 +36,16 @@ pub fn expand(input: TokenStream) -> TokenStream {
                 }
             }
             Fields::Unnamed(ref fields) => {
-                let recurse =
-                    fields.unnamed.iter().enumerate().map(|(i, f)| {
-                        let index = Index {
-                            index: i as u32,
-                            span: call_site,
-                        };
-                        let access = quote_spanned!(call_site => #var.#index);
-                        quote_spanned! { f.span() =>
-                            count += #root::NumberBytes::num_bytes(&#access);
-                        }
-                    });
+                let recurse = fields.unnamed.iter().enumerate().map(|(i, f)| {
+                    let index = Index {
+                        index: i as u32,
+                        span: call_site,
+                    };
+                    let access = quote_spanned!(call_site => #var.#index);
+                    quote_spanned! { f.span() =>
+                        count += #root::NumberBytes::num_bytes(&#access);
+                    }
+                });
                 quote! {
                     #(#recurse)*
                 }

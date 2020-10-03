@@ -1,10 +1,15 @@
-use crate::item::Item;
-use serde::{Serialize, Deserialize};
+use alloc::string::String;
+use alloc::vec::Vec;
 
-#[derive(Serialize, Deserialize, Debug)]
+use crate::item::Item;
+#[cfg(feature = "std")]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug)]
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
 pub struct Group {
     /// name of the group
     pub name: String,
     /// information on the permission group
-    pub items: Vec<Item>
+    pub items: Vec<Item>,
 }

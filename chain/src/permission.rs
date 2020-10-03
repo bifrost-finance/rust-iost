@@ -1,7 +1,12 @@
-use crate::item::Item;
-use serde::{Serialize, Deserialize};
+use alloc::string::String;
+use alloc::vec::Vec;
 
-#[derive(Serialize, Deserialize, Debug)]
+use crate::item::Item;
+#[cfg(feature = "std")]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug)]
+#[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
 pub struct Permission {
     /// permission name
     pub name: String,
@@ -10,5 +15,5 @@ pub struct Permission {
     /// permission information
     pub items: Vec<Item>,
     /// permission threshold
-    pub threshold: String
+    pub threshold: String,
 }
