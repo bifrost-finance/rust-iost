@@ -13,7 +13,7 @@ An Iost library implemented in Rust
 2. Clone rust-iost repository
 
 ```
-# git clone https://github.com/bifrost-codes/rust-iost.git
+# git clone https://github.com/bifrost-finance/rust-iost.git
 ```
 
 3. Run Cargo test
