@@ -1,6 +1,6 @@
 use alloc::boxed::Box;
 use alloc::vec::Vec;
-use core::convert::{TryFrom};
+use core::convert::TryFrom;
 
 use ed25519_dalek::{Signature, Signer, Verifier};
 #[cfg(feature = "std")]

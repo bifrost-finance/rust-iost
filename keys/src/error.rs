@@ -1,6 +1,7 @@
-use crate::base58;
 use alloc::string::ToString;
 use core::fmt;
+
+use crate::base58;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -12,6 +13,7 @@ pub enum Error {
     Secp256k1(secp256k1::Error),
 
     ErrorEd25519,
+
     ErrorSecp256k1,
     /// hash error
     Hash(bitcoin_hashes::error::Error),
@@ -31,27 +33,6 @@ impl fmt::Display for Error {
         }
     }
 }
-
-//#[cfg(feature = "std")]
-//impl std::error::Error for Error {
-//    fn description(&self) -> &str {
-//        match *self {
-//            Error::Base58(ref e) => e.description(),
-//            Error::Secp256k1(ref e) => &e.as_str(),
-//            Error::Hash(ref e) => &e.as_str(),
-//            ref VerifyFailed => "Verify failed",
-//        }
-//    }
-//
-//    fn cause(&self) -> Option<&dyn std::error::Error> {
-//        match *self {
-//            Error::Base58(ref e) => Some(e),
-//            Error::Secp256k1(ref e) => None,
-//            Error::Hash(ref e) => None,
-//            ref VerifyFailed => None,
-//        }
-//    }
-//}
 
 impl From<base58::Error> for Error {
     fn from(e: base58::Error) -> Error {
