@@ -2,16 +2,16 @@ use alloc::string::{String, ToString};
 use alloc::vec;
 use alloc::vec::Vec;
 
-use crate::Error::{BytesReadError, InvalidPublisherSignature, InvalidSignature};
-use crate::{
-    Action, AmountLimit, NumberBytes, Read, ReadError, SerializeData, Signature, Write, WriteError,
-};
-use chrono::{DateTime, Duration, TimeZone, Timelike, Utc};
-use keys::algorithm;
-use lite_json::{JsonObject, JsonValue, NumberValue, Serialize};
+use chrono::{Duration, Utc};
+use lite_json::{JsonValue, NumberValue, Serialize};
 #[cfg(feature = "std")]
-use serde::{ser::Serializer, Deserialize, Deserializer, Serialize as SerSerialize};
+use serde::{Deserialize, Serialize as SerSerialize};
 use sha3::{Digest, Sha3_256};
+
+use crate::Error::{InvalidPublisherSignature, InvalidSignature};
+use crate::{
+    AmountLimit, IostAction, NumberBytes, Read, SerializeData, Signature, Write, WriteError,
+};
 
 #[derive(Clone, Default, Debug, Read, Write, NumberBytes, SerializeData)]
 #[cfg_attr(feature = "std", derive(Deserialize, SerSerialize))]
@@ -30,7 +30,7 @@ pub struct Tx {
     /// Network ID
     pub chain_id: u32,
     /// Specific call in transaction
-    pub actions: Vec<Action>,
+    pub actions: Vec<IostAction>,
     /// Token restrictions on transactions. You can specify multiple tokens and a corresponding number limit. If the transaction exceeds these limits, execution fails
     pub amount_limit: Vec<AmountLimit>,
     /// ID of the transaction sender
@@ -55,7 +55,7 @@ where
 }
 
 impl Tx {
-    pub fn new(time: i64, expiration: i64, chain_id: u32, actions: Vec<Action>) -> Self {
+    pub fn new(time: i64, expiration: i64, chain_id: u32, actions: Vec<IostAction>) -> Self {
         let amount_limit = AmountLimit {
             token: "*".to_string(),
             value: "unlimited".to_string(),
@@ -78,7 +78,7 @@ impl Tx {
     }
 
     #[cfg(feature = "std")]
-    pub fn from_action(actions: Vec<Action>) -> Self {
+    pub fn from_action(actions: Vec<IostAction>) -> Self {
         let amount_limit = AmountLimit {
             token: "*".to_string(),
             value: "unlimited".to_string(),
@@ -241,7 +241,7 @@ impl Tx {
         self.signers.len().write(bytes, pos)?;
         expand::<String>(&self.signers, bytes, pos);
         self.actions.len().write(bytes, pos);
-        expand::<Action>(&self.actions, bytes, pos);
+        expand::<IostAction>(&self.actions, bytes, pos);
         self.amount_limit.len().write(bytes, pos);
         expand::<AmountLimit>(&self.amount_limit, bytes, pos);
         if with_sign {
@@ -305,11 +305,10 @@ impl Tx {
 #[cfg(test)]
 mod test {
     use super::*;
-    use base58::FromBase58;
 
     #[test]
     fn test_bytes_serialization() {
-        let tx = Tx::from_action(vec![Action {
+        let tx = Tx::from_action(vec![IostAction {
             contract: "token.iost".to_string().into_bytes(),
             action_name: "transfer".to_string().into_bytes(),
             data: r#"["iost","admin","lispczz3","100",""]"#.to_string().into_bytes(),
@@ -326,7 +325,7 @@ mod test {
 
     #[test]
     fn test_send_tx() {
-        let action = Action::transfer("lispczz4", "lispczz5", "10", "").unwrap();
+        let action = IostAction::transfer("lispczz4", "lispczz5", "10", "").unwrap();
         // let mut tx = Tx::from_action(vec![Action {
         //     contract: "token.iost".to_string().into_bytes(),
         //     action_name: "transfer".to_string().into_bytes(),
@@ -335,8 +334,8 @@ mod test {
 
         let mut tx = Tx::from_action(vec![action]);
         // let sec_key = "2yquS3ySrGWPEKywCPzX4RTJugqRh7kJSo5aehsLYPEWkUxBWA39oMrZ7ZxuM4fgyXYs2cPwh5n8aNNpH5x2VyK1".from_base58().unwrap();
-        let sec_key = "xjggJ3TrLXz7qEwrGG3Rc4Fz59imjixhXpViq9W7Ncx"
-            .from_base58()
+        let sec_key = bs58::decode("xjggJ3TrLXz7qEwrGG3Rc4Fz59imjixhXpViq9W7Ncx")
+            .into_vec()
             .unwrap();
         // let sec_key = base64::decode("2yquS3ySrGWPEKywCPzX4RTJugqRh7kJSo5aehsLYPEWkUxBWA39oMrZ7ZxuM4fgyXYs2cPwh5n8aNNpH5x2VyK1").unwrap();
         tx.sign(
@@ -369,7 +368,7 @@ mod test {
             gas_limit: 1000000.0,
             delay: 0,
             chain_id: 1024,
-            actions: vec![Action {
+            actions: vec![IostAction {
                 contract: "token.iost".to_string().into_bytes(),
                 action_name: "transfer".to_string().into_bytes(),
                 data: r#"["iost","admin","lispczz3","100",""]"#.to_string().into_bytes(),
@@ -383,8 +382,9 @@ mod test {
             signers: vec![],
             signatures: vec![],
         };
+
         // let data: Vec<u8> = tx.to_serialize_data().unwrap();
-        let sec_key = "2yquS3ySrGWPEKywCPzX4RTJugqRh7kJSo5aehsLYPEWkUxBWA39oMrZ7ZxuM4fgyXYs2cPwh5n8aNNpH5x2VyK1".from_base58().unwrap();
+        let sec_key = bs58::decode("2yquS3ySrGWPEKywCPzX4RTJugqRh7kJSo5aehsLYPEWkUxBWA39oMrZ7ZxuM4fgyXYs2cPwh5n8aNNpH5x2VyK1").into_vec().unwrap();
         // let sec_key = base64::decode("2yquS3ySrGWPEKywCPzX4RTJugqRh7kJSo5aehsLYPEWkUxBWA39oMrZ7ZxuM4fgyXYs2cPwh5n8aNNpH5x2VyK1").unwrap();
         tx.sign("admin".to_string(), algorithm::ED25519, sec_key.as_slice());
         // let s = String::from_utf8(data.clone());
@@ -419,7 +419,7 @@ mod test {
             gas_limit: 500000.0,
             delay: 0,
             chain_id: 1024,
-            actions: vec![ Action {
+            actions: vec![ IostAction {
                 contract: "token.iost".to_string().into_bytes(),
                 action_name: "transfer".to_string().into_bytes(),
                 data: r#"["iost", "testaccount", "anothertest", "100", "this is an example transfer"]"#.to_string().into_bytes(),
@@ -447,7 +447,7 @@ mod test {
             gas_limit: 500000.0,
             delay: 0,
             chain_id: 1024,
-            actions: vec![ Action {
+            actions: vec![ IostAction {
                 contract: "token.iost".to_string().into_bytes(),
                 action_name: "transfer".to_string().into_bytes(),
                 data: "[\"iost\", \"testaccount\", \"anothertest\", \"100\", \"this is an example transfer\"]".to_string().into_bytes(),

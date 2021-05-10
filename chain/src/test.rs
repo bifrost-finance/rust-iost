@@ -1,8 +1,6 @@
+use crate::{AmountLimit, IostAction, NumberBytes, Read, Result, SerializeData, Tx, Write};
 use alloc::vec::Vec;
 use alloc::{format, vec};
-
-use crate::time_point::TimePoint;
-use crate::{Action, AmountLimit, NumberBytes, Read, Result, SerializeData, Tx, Write};
 // use base58::{FromBase58, ToBase58};
 use chrono::{DateTime, Duration, TimeZone, Timelike, Utc};
 use keys::algorithm;
@@ -13,6 +11,8 @@ fn print_hex() {
     let raw_string = "lispczz5".to_string().into_bytes();
     dbg!(hex::encode(raw_string.as_slice()));
 
+    // 0x6c697370637a7a35
+
     dbg!(String::from_utf8(
         "fe65717dad0447d715f660a0a58411de509b42e6efb8375f562f58a554d5860e"
             .as_bytes()
@@ -22,7 +22,7 @@ fn print_hex() {
 
 #[test]
 fn should_action_serialization_successful() {
-    let action = Action::new(
+    let action = IostAction::new(
         String::from("'token.iost'"),
         String::from("'transfer'"),
         String::from(r#"["iost","admin","lispczz","10.12034123",""]"#),
@@ -50,7 +50,7 @@ use sha3::{Digest, Sha3_256};
 
 #[test]
 fn should_tx_serialization_and_sign_successful() {
-    let action = Action::new(
+    let action = IostAction::new(
         String::from("'token.iost'"),
         String::from("'transfer'"),
         String::from(r#"["iost","admin","lispczz","10.12034123",""]"#),
