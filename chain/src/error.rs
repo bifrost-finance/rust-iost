@@ -1,4 +1,5 @@
 use crate::{ErrorMessage, ParseNameError, ReadError, WriteError};
+use alloc::string::String;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -21,4 +22,12 @@ pub enum Error {
 
     InvalidSignature(),
     InvalidPublisherSignature(),
+
+    InvalidSPVStartBlock(i64),
+    IOSTBlockError(),
+
+    IOSTBlockVerifyError(String),
+    IOSTInvalidBlockSignature(),
+    IOSTUpdateEpochError(String),
+    IOSTBlockWitnessError(String),
 }

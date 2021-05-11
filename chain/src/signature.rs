@@ -6,9 +6,9 @@ use alloc::vec::Vec;
 use crate::{Error, NumberBytes, Read, Write};
 use core::str::FromStr;
 use keys::algorithm;
-use lite_json::{JsonObject, JsonValue, Serialize};
+use lite_json::JsonValue;
 #[cfg(feature = "std")]
-use serde::{Deserialize, Serialize as SerSerialize, Serializer};
+use serde::Serialize as SerSerialize;
 
 #[derive(Clone, Default, Debug, NumberBytes, Write, Read)]
 #[cfg_attr(feature = "std", derive(SerSerialize))]

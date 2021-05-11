@@ -1,17 +1,16 @@
 [package]
 name = "iost-chain"
 version = "0.1.0"
-authors = ["Qiannan Lu <lvqiannan@gmail.com>"]
+authors = ["alexgituser <alexgituser@email.com>"]
 edition = "2018"
 
 [dependencies]
 async-trait = { version = "0.1.36", default-features = false }
-base58 = { version = "0.1.0", default-features = false, optional = true }
+bs58 = { version = "0.3.0", default-features = false, features = ["alloc"] }
 base64 = { version = "0.12.3", default-features = false, features= ["alloc"] }
 byteorder = { version = "1.3.2", default-features = false }
 chrono = { version = "0.4.10", default-features = false }
-crypto = { version = "0.0.2", default-features = false }
-codec = { package = "parity-scale-codec", version = "1.0.0", default-features = false, features = ["derive"] }
+codec = { package = "parity-scale-codec", version = "2.0.0", default-features = false, features = ["derive"] }
 digest = { version = "0.8.1", default-features = false }
 hex = { version = "0.4", default-features = false }
 iost-derive = { path ="../iost-derive" }
@@ -22,6 +21,8 @@ serde_json = { version = "1.0.52", default-features = false, optional = true, fe
 sha3 = { version = "0.8.2", default-features = false}
 lite-json = { version = "0.1.0", git = "https://github.com/xlc/lite-json", default-features = false, features = ["float"]}
 
+ed25519-dalek = { version = "1.0.1", default-features = false, optional = true, features = ["u64_backend", "alloc"] }
+
 [dev-dependencies]
 tokio = { version = "0.2.6", features = ["macros"] }
 reqwest = { version = "0.10.0", features = ["json", "blocking"] }
@@ -29,8 +30,6 @@ reqwest = { version = "0.10.0", features = ["json", "blocking"] }
 [features]
 default = ["std"]
 std = [
-#"byteorder/std",
-    "base58",
     "base64/std",
     "chrono/default",
     "codec/std",
